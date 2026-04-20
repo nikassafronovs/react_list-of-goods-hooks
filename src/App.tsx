@@ -16,26 +16,27 @@ export const goodsFromServer = [
 ];
 
 enum SortType {
+  Default = 'default',
   Alphabetically = 'alphabet',
   Length = 'length',
 }
 
 type Options = {
-  sortType: SortType | '';
+  sortType: SortType;
   isReversed: boolean;
 };
 
 function getPreparedGoods(goods: string[], { sortType, isReversed }: Options) {
   const preparedGoods = [...goods];
 
-  if (sortType) {
-    preparedGoods.sort((good1, good2) => {
+  if (sortType !== SortType.Default) {
+    preparedGoods.sort((a, b) => {
       switch (sortType) {
         case SortType.Alphabetically:
-          return good1.localeCompare(good2);
+          return a.localeCompare(b);
 
         case SortType.Length:
-          return good1.length - good2.length;
+          return a.length - b.length;
 
         default:
           return 0;
@@ -52,7 +53,7 @@ function getPreparedGoods(goods: string[], { sortType, isReversed }: Options) {
 
 export const App: React.FC = () => {
   const [isReversed, setIsReversed] = useState(false);
-  const [sortType, setSortType] = useState<SortType | ''>('');
+  const [sortType, setSortType] = useState<SortType>(SortType.Default);
   const visibleGoods = getPreparedGoods(goodsFromServer, {
     sortType,
     isReversed,
@@ -85,10 +86,10 @@ export const App: React.FC = () => {
           Reverse
         </button>
 
-        {(sortType || isReversed) && (
+        {(sortType !== SortType.Default || isReversed) && (
           <button
             onClick={() => {
-              setSortType('');
+              setSortType(SortType.Default);
               setIsReversed(false);
             }}
             type="button"
